@@ -17,34 +17,110 @@ import (
 const (
 	sampleRate = 44100 // samples to generate, per second
 
-	repeat = 1
+	durationSecs = 1
 )
 
 func main() {
 	// generate()
 
-	var freq float64 = 440.0
+	var freq float64 = 360.0
 
 	var f func(float64) []float64 = Sin
 	var samples []float64
 
 	root := f(freq)
-	third := f(freq * 5 / 4)
-	fifth := f(freq * 3 / 2)
-	octave := f(freq * 2)
-	bass := f(freq / 2)
-	bass2 := f(freq / 2 / 2)
-	seventh := multiply(f(freq*15/8), 0.5)
+	// third := f(freq * 5 / 4)
+	// fifth := f(freq * 3 / 2)
+	// octave := f(freq * 2)
+	// bass := f(freq / 2)
+	// bass2 := f(freq / 2 / 2)
+	// seventh := multiply(f(freq*15/8), 0.5)
+
+	furiers := Fouriers(freq, 1)
+	// twoFuriers := Fouriers(freq, 2)
+	// threeFuriouso := Fouriers(freq, 3)
+	sawtooth := SawTooth(freq, 2, 6, -25)
+	// sawtooth1 := SawTooth(freq, 1.0, 4, 4)
+	// sawtooth2 := SawTooth(freq, 1.0, 4, -4)
+	// sawtooth3 := SawTooth(freq, 1.0, 1, 0)
+	// sawtooth4 := SawTooth(freq, 1.0, 25, 0)
+	// square := Square(freq / 2 / 2)
+	// triangle := Triangle(freq, 1)
+	// triangle1 := Triangle(freq, 2)
+	// triangle2 := Triangle(freq, 10)
+	// triangle3 := Triangle(freq*5/4, 0.5)
+	// triangle4 := Triangle(freq, -1)
+	// triangle5 := Triangle(freq, 0)
+
+	// triangleAmp := float64(0)
+	// third := Triangle(freq*5/4, triangleAmp)
+	// fifth := Triangle(freq*3/2, triangleAmp)
+	// octave := Triangle(freq*2, triangleAmp)
+	// bass := Triangle(freq/2, triangleAmp)
+	// bass2 := Triangle(freq/2/2, triangleAmp)
+	// seventh := multiply(Triangle(freq*15/8, triangleAmp), 0.5)
+	third := Square(freq * 5 / 4)
+	fifth := Square(freq * 3 / 2)
+	octave := Square(freq * 2)
+	bass := Square(freq / 2)
+	bass2 := Square(freq / 2 / 2)
+	seventh := multiply(Square(freq*15/8), 0.5)
+
+	fTerms := 2
+	thirdF := Fouriers(freq*5/4, fTerms)
+	fifthF := Fouriers(freq*3/2, fTerms)
+	octaveF := Fouriers(freq*2, fTerms)
+	bassF := Fouriers(freq/2, fTerms)
+	// bassFF := Fouriers(freq/2/2, fTerms)
+	// seventhFF := multiply(Fouriers(freq*15/8, fTerms), 0.5)
 
 	samples = root
+	samples = append(samples, sum(root, furiers, sawtooth)...)
+	samples = append(samples, sawtooth...)
+	samples = append(samples, sawtooth...)
+	samples = append(samples, sawtooth...)
+	samples = append(samples, sawtooth...)
+	// samples = append(samples, sawtooth1...)
+	// samples = append(samples, sawtooth2...)
+	// samples = append(samples, sawtooth3...)
+	// samples = append(samples, sawtooth4...)
+	// samples = append(samples, furiers...)
+	// samples = append(samples, twoFuriers...)
+	// samples = append(samples, threeFuriouso...)
+	// samples = append(samples, sawtooth...)
+	// samples = append(samples, square...)
+	// samples = append(samples, root...)
+	// samples = append(samples, sum(root, triangle5)...)
+	// samples = append(samples, root...)
+	// samples = append(samples, sum(root, triangle5)...)
+	// samples = append(samples, root...)
+	// samples = append(samples, triangle...)
+	// samples = append(samples, triangle1...)
+	// samples = append(samples, triangle2...)
+	// samples = append(samples, triangle3...)
+	// samples = append(samples, triangle4...)
+	// samples = append(samples, triangle5...)
+
 	// chords :)
 	samples = append(samples, sum(root, third)...)
+	samples = append(samples, sum(root, third)...)
+	samples = append(samples, sum(root, third)...)
 	samples = append(samples, sum(root, third, fifth)...)
-	samples = append(samples, sum(root, third, fifth, octave)...)
-	samples = append(samples, sum(root, third, fifth, octave, bass)...)
-	samples = append(samples, sum(root, third, fifth, octave, bass2)...)
+	samples = append(samples, sum(root, third, fifth)...)
+	samples = append(samples, sum(root, third, fifth)...)
+	samples = append(samples, sum(root, third, fifth, octaveF)...)
+	samples = append(samples, sum(root, third, fifth, octaveF)...)
+	samples = append(samples, sum(root, third, fifth, octave, bass, bassF)...)
+	samples = append(samples, sum(root, third, fifth, octave, bass, bassF)...)
+	samples = append(samples, sum(root, third, fifth, octave, bass2, bassF)...)
+	samples = append(samples, sum(root, third, fifth, octave, bass2, bassF)...)
 	samples = append(samples, sum(root, third, fifth, octave, bass2, seventh)...)
 	samples = append(samples, sum(root, third, fifth, octave, bass2, seventh)...)
+	samples = append(samples, sum(root, third, fifth, octave, bass2, seventh)...)
+	samples = append(samples, sum(root, third, fifth, octave, bass2, seventh)...)
+	samples = append(samples, sum(root, third, thirdF, fifth, fifthF, octave, octaveF, bass2, seventh)...)
+	samples = append(samples, sum(root, third, thirdF, fifth, fifthF, octave, octaveF, bass2, seventh)...)
+	samples = append(samples, sum(root, third, thirdF, fifth, fifthF, octave, octaveF, bass2, seventh)...)
 
 	// samples = sum(
 	// 	Sin(freq/2/2), // bass
@@ -72,8 +148,8 @@ func main() {
 	samples = limit(samples)
 
 	var total []float64
-	for x := 0; x < repeat; x++ {
-		for _, samp := range samples {
+	for _, samp := range samples {
+		for x := 0; x < durationSecs; x++ {
 			// samp *= start
 			// start *= decayfac
 			fmt.Printf("%.8f\n", samp)

@@ -7,8 +7,10 @@ run:
 plot: # brew install gnuplot
 	gnuplot -e 'plot "out.txt" with boxes' -p
 
-play: # brew install ffmpeg
-	ffplay out.bin -f f32le -ar 44100 -x 1600 -y 800 -showmode 1
+play: play-2
+
+play-%: # brew install ffmpeg
+	ffplay out.bin -f f32le -ar 44100  -x 1600 -y 800 -loop 8  -autoexit -showmode $(*)
 
 clean:
 	rm out.*
