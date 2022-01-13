@@ -81,6 +81,9 @@ func main() {
 	if err := WriteBin("out.bin", total); err != nil {
 		panic(err)
 	}
+	if _, err := StreamOut(total); err != nil {
+		panic(err)
+	}
 }
 
 func sum(sampleSets ...[]float64) (summed []float64) {
